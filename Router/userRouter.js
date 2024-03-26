@@ -3,8 +3,10 @@ const router=express.Router()
 const user=require("../Controller/userController")
 const tryCatch=require('../Middleware/tryCatch')
 
-router.route("/user")
-.post(tryCatch(user.registerUser))
+router
+.post("/register",tryCatch(user.userRegistration))
+.post("/login",tryCatch(user.userLogin))
+
 
 
 

@@ -1,9 +1,12 @@
 const mongoose=require('mongoose')
 const otpSchema=new mongoose.Schema({
-    email:{String,
-    require:"true"
-},
-otp:{Number,
+    // email:{type:String,},
+    userId:{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:"user",
+        required:true
+    },
+otp:{type:Number,
 },
 expiresAt:{
     type:Date,
@@ -11,4 +14,4 @@ expiresAt:{
 }},
 {timestamps:true}
 )
-const otp=mongoose.model(otp,otpSchema)
+const otp=mongoose.model("otp",otpSchema)
