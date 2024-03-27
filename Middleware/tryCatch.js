@@ -8,7 +8,7 @@ const tryCAtchMiddleware=(handler)=>{
             res.json({
                 message:"Something went wrong",
                 status:"failure",
-                error_message:error.message
+                error_message:error.message 
             })
         }
     }

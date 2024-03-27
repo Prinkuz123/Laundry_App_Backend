@@ -1,10 +1,8 @@
-const { mongo } = require('mongoose')
 const otpModel=require('../Model/otepSchema')
-const sendMail=require("../utils/nodeMailer")
-
+const {sendMail}=require('../utils/nodeMailer')
 
 module.exports={
-    sendOtpAndSave:async(email,phoneNumber,password,userId)=>{
+    sendOtpAndSave:async(email,phoneNumber,userName,userId)=>{
        
        //Generate OTP
         const otpCode=Math.floor(1000+Math.random()*9000).toString()

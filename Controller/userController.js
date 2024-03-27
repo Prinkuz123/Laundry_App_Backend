@@ -1,7 +1,7 @@
 const userModel = require("../Model/userSchema");
 const bcrypt = require("bcrypt");
 const otpModel = require("../Model/otepSchema");
-const { sendEmail } = require("../utils/nodeMailer");
+// const { sendEmail } = require("../utils/nodeMailer");
 const { sendOtpAndSave } = require("../utils/sendOtp");
 
 module.exports = {
@@ -18,7 +18,7 @@ module.exports = {
 
     // Prepare the query to find an existing user based on email or phone number
     const findCategory = email ? { email } : { phoneNumber };
-
+    
     // Check if user already exists
     const user = await userModel.findOne(findCategory);
     if (user) {
@@ -50,15 +50,28 @@ module.exports = {
   //------------userLogin-------------
   userLogin: async (req, res) => {
     const { email, password, phoneNumber } = req.body;
-    const findCriteria = email ? { email } : { phoneNumber };
-    if (!findCriteria) {
-      return res.status(400).json({
-        message: "Missing required fields",
-        status: "failure",
-      });
+    // const findCriteria = email ? { email } : { phoneNumber };
+    const findCategory={}
+    if(email){
+      findCategory.email=email
     }
+    else if(phoneNumber){
+      findCategory.phoneNumber=phoneNumber
+    }
+else{
+  return res.status(400).json({
+    message:"Missing required fields email or phoneNumber",
+    status:"failure"
+  })
+}
+    // if (!findCriteria) {
+    //   return res.status(400).json({
+    //     message: "Missing required fields",
+    //     status: "failure",
+    //   });
+    // }
 
-    const findUser = await userModel.findOne(findCriteria);
+    const findUser = await userModel.findOne(findCategory);
     if (!findUser || !(await bcrypt.compare(password, findUser.password))) {
       res.status(400).json({
         staus: "failure",
@@ -78,26 +91,29 @@ module.exports = {
       findUser._id,
       findUser.userName
     );
+  
     res.staus(200).res.json({
       status: "success",
       message: otpMessage,
       data: data,
     });
   },
+  
+
 
   //-------otp verification------
-  verifyOtp: async (req, res) => {
-    const { email, otp } = req.body;
-    const otpCode = otpModel.findOne({ email: emai }, { otp: otp });
-    if (!otpCode) {
-      res.status(404).json({
-        message: "Incorrect OTP",
-        status: "failure",
-      });
-    }
-    return res.status(200).json({
-      message: "OTP Verification su",
-    });
-  },
+  // verifyOtp: async (req, res) => {
+  //   const { email, otp } = req.body;
+  //   const otpCode = otpModel.findOne({ email: emai }, { otp: otp });
+  //   if (!otpCode) {
+  //     res.status(404).json({
+  //       message: "Incorrect OTP",
+  //       status: "failure",
+  //     });
+  //   }
+  //   return res.status(200).json({
+  //     message: "OTP Verification su",
+  //   });
+  // },
 };
 
