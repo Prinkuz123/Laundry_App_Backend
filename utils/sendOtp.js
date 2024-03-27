@@ -1,16 +1,19 @@
 const otpModel=require('../Model/otepSchema')
-const {sendMail}=require('../utils/nodeMailer')
+// const {sendMail=require('../utils/nodeMailer')
+const nodeMailer = require('../utils/nodeMailer');
+
 
 module.exports={
-    sendOtpAndSave:async(email,phoneNumber,userName,userId)=>{
+    sendOtpAndSave:async(email,phoneNumber,userId,userName)=>{
        
        //Generate OTP
         const otpCode=Math.floor(1000+Math.random()*9000).toString()
-        const otpSent=false
+        let otpSent=false
         let otpMessage;
 
         if(email){
-            otpSent=await sendMail(email,otpCode,userName)
+            otpSent = await nodeMailer.sendEmail(email, otpCode, userName);
+
                 otpMessage="A verification code has been sent to your email address";
         }
         else if(phoneNumber){

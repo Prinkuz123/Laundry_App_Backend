@@ -22,7 +22,7 @@ module.exports = {
     // Check if user already exists
     const user = await userModel.findOne(findCategory);
     if (user) {
-      return res.status(422).json({ error: "User already exists" });
+      return res.status(422).json({ message: "User already exists" });
     }
 
     // Hash the password
@@ -92,7 +92,7 @@ else{
       findUser.userName
     );
   
-    res.staus(200).res.json({
+    res.status(200).json({
       status: "success",
       message: otpMessage,
       data: data,
