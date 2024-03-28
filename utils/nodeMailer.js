@@ -2,7 +2,9 @@ const nodeMailer=require('nodemailer')
 require('dotenv').config()
 
 module.exports={
-    sendEmail:async (email,name,otp)=>{
+    sendEmail:async (email,otp,name)=>{
+
+      console.log(process.env.APP_EMAIL,process.env.APP_PASSWORD);
 
         const transporter = nodeMailer.createTransport({
             // service:"gmail",
@@ -13,6 +15,7 @@ module.exports={
               user: process.env.APP_EMAIL,
               pass:process.env.APP_PASSWORD,
             },
+            
             requireTLS:true,
             logger:true
             

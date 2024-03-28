@@ -50,7 +50,6 @@ module.exports = {
   //------------userLogin-------------
   userLogin: async (req, res) => {
     const { email, password, phoneNumber } = req.body;
-    // const findCriteria = email ? { email } : { phoneNumber };
     const findCategory={}
     if(email){
       findCategory.email=email
@@ -64,12 +63,7 @@ else{
     status:"failure"
   })
 }
-    // if (!findCriteria) {
-    //   return res.status(400).json({
-    //     message: "Missing required fields",
-    //     status: "failure",
-    //   });
-    // }
+   
 
     const findUser = await userModel.findOne(findCategory);
     if (!findUser || !(await bcrypt.compare(password, findUser.password))) {

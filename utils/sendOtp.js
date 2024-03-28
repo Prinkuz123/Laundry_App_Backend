@@ -1,6 +1,6 @@
 const otpModel=require('../Model/otepSchema')
-// const {sendMail=require('../utils/nodeMailer')
-const nodeMailer = require('../utils/nodeMailer');
+const {sendEmail}=require('../utils/nodeMailer')
+// const nodeMailer = require('../utils/nodeMailer');
 
 
 module.exports={
@@ -12,7 +12,7 @@ module.exports={
         let otpMessage;
 
         if(email){
-            otpSent = await nodeMailer.sendEmail(email, otpCode, userName);
+            otpSent = await sendEmail(email, otpCode, userName);
 
                 otpMessage="A verification code has been sent to your email address";
         }
