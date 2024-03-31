@@ -8,7 +8,7 @@ module.exports = {
   userRegistration: async (req, res) => {
     const { userName, email, password, phoneNumber } = req.body;
 
-    // Check if either email or phoneNumber is provided
+    // Check if either email ,phoneNumber, userid and password is provided
     if (!userName || (!email && !phoneNumber) || !password) {
       return res.status(400).json({
         message: "Email or phonenumber is mandatory to register",
@@ -143,7 +143,8 @@ findCriteria.email=email
     message:"Missing required fields: email or password",
     status:"failure"
   })
-const findUser=userModel.findOne(findCriteria)
+const findUser= await userModel.findOne(findCriteria)
+console.log(findUser)
 if(!findUser){
   res.staus(400).json({
     message:"User not found",
@@ -151,7 +152,6 @@ if(!findUser){
   })
 }
 const {otpMessage,data}=await sendOtpAndSave(
-  // email,phoneNumber,findUser._id,findUser.userName
   email,
       phoneNumber,
       findUser._id,
@@ -162,8 +162,31 @@ return res.status(200).json({
   status:"success",
   data:data
 }) 
-  }
+  },
 
+
+  // ----------------create password-----------
+
+  createPassword: async (req,res)=>{
+    const{newPassword}=req.body
+    const userId=req.params.id
+    const hashedPassword=await bcrypt.hash(newPassword,10)
+    const updatedUser=await userModel.findByIdAndUpdate(userId,{password:hashedPassword},{new:true})
+    if(!updatedUser){
+     return  res.status(400).json({
+        message:"User not found",
+        status:"Failure",
+
+      })
+
+    }
+    return res.status(200).json({
+      message:"Password updated successfully",
+      satus:"success"
+    })
+
+
+  }
 
 
 

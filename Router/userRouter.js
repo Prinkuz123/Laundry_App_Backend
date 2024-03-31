@@ -8,6 +8,8 @@ router
 .post("/user/login",tryCatch(user.userLogin))
 .post("/user/login/:id",tryCatch(user.verifyOtp))
 .post("/user/forgot/password",tryCatch(user.forgotPassword))
+.post("/user/create/password/:id",tryCatch(user.createPassword))
+
 
 
 
