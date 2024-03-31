@@ -1,7 +1,6 @@
 const otpModel=require('../Model/otepSchema')
 const {sendEmail}=require('../utils/nodeMailer')
-// const nodeMailer = require('../utils/nodeMailer');
-
+const{sendSms}=require('../utils/twillio')
 
 module.exports={
     sendOtpAndSave:async(email,phoneNumber,userId,userName)=>{

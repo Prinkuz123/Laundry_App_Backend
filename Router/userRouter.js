@@ -6,6 +6,10 @@ const tryCatch=require('../Middleware/tryCatch')
 router
 .post("/user/register",tryCatch(user.userRegistration))
 .post("/user/login",tryCatch(user.userLogin))
+.post("/user/login/:id",tryCatch(user.verifyOtp))
+.post("/user/forgot/password",tryCatch(user.forgotPassword))
+
+
 
 
 

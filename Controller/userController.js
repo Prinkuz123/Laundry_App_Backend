@@ -11,7 +11,7 @@ module.exports = {
     // Check if either email or phoneNumber is provided
     if (!userName || (!email && !phoneNumber) || !password) {
       return res.status(400).json({
-        message: "Email or phone number is mandatory to register",
+        message: "Email or phonenumber is mandatory to register",
         status: "failure",
       });
     }
@@ -96,18 +96,76 @@ else{
 
 
   //-------otp verification------
-  // verifyOtp: async (req, res) => {
-  //   const { email, otp } = req.body;
-  //   const otpCode = otpModel.findOne({ email: emai }, { otp: otp });
-  //   if (!otpCode) {
-  //     res.status(404).json({
-  //       message: "Incorrect OTP",
-  //       status: "failure",
-  //     });
-  //   }
-  //   return res.status(200).json({
-  //     message: "OTP Verification su",
-  //   });
-  // },
+ 
+  verifyOtp:async(req,res)=>{
+   const {otp}=req.body
+    const userId=req.params.id
+    //to convert to number
+    const numOtp=+otp
+    // console.log(numOtp)
+    const findOtp=await otpModel.findOne({userId}).sort({createdAt:-1}).limit(-1)
+// console.log("findOtP",findOtp)
+    if(!findOtp){
+     return  res.status(400).json(
+      {  message:"Incorrect  otp number",
+        status:"failure"}
+      )
+    }
+    // const findOtpData=findOtp[0]
+     const otpData=findOtp.otp
+     if(otpData!==numOtp){
+return res.status(400).json({
+  message:"Incorrect Otp",
+  status:"failure"
+
+})
+     }
+
+     return res.status(200).json({
+      message:" OTP Validation success",
+      status:"Success"
+     })
+  },
+
+
+  //-----------forgotpassword--------------
+ forgotPassword:async(req,res)=>{
+  const{email,phoneNumber}=req.body
+
+  let findCriteria={}
+  if(email){
+findCriteria.email=email
+  }
+  else if(phoneNumber){
+    findCriteria.phoneNumber=phoneNumber
+  }
+  else return res.status(400).json({
+    message:"Missing required fields: email or password",
+    status:"failure"
+  })
+const findUser=userModel.findOne(findCriteria)
+if(!findUser){
+  res.staus(400).json({
+    message:"User not found",
+    status:"Failure"
+  })
+}
+const {otpMessage,data}=await sendOtpAndSave(
+  // email,phoneNumber,findUser._id,findUser.userName
+  email,
+      phoneNumber,
+      findUser._id,
+      findUser.userName
+)
+return res.status(200).json({
+  message:otpMessage,
+  status:"success",
+  data:data
+}) 
+  }
+
+
+
+
 };
 
