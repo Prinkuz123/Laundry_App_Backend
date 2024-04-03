@@ -1,6 +1,7 @@
 const express=require('express')
 const mongoose=require("mongoose")
 const app=express()
+const jwt=require('jsonwebtoken')
 require('dotenv').config()
 
 app.use(express.json())

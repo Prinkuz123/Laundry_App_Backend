@@ -67,7 +67,7 @@ else{
 
     const findUser = await userModel.findOne(findCategory);
     if (!findUser || !(await bcrypt.compare(password, findUser.password))) {
-      res.status(400).json({
+     return  res.status(401).json({
         staus: "failure",
         message: "Invalid email,phoneNumber or password ",
       });
@@ -146,7 +146,7 @@ findCriteria.email=email
 const findUser= await userModel.findOne(findCriteria)
 console.log(findUser)
 if(!findUser){
-  res.staus(400).json({
+  return res.staus(400).json({
     message:"User not found",
     status:"Failure"
   })
@@ -169,8 +169,12 @@ return res.status(200).json({
 
   createPassword: async (req,res)=>{
     const{newPassword}=req.body
+    // console.log(req.body);
     const userId=req.params.id
     const hashedPassword=await bcrypt.hash(newPassword,10)
+    // const hashedPassword = await bcrypt.hash(password, 10);
+
+    // console.log(hashedPassword);
     const updatedUser=await userModel.findByIdAndUpdate(userId,{password:hashedPassword},{new:true})
     if(!updatedUser){
      return  res.status(400).json({
