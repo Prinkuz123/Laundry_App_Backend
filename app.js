@@ -23,4 +23,4 @@ app.listen(Port,()=>{
 })
 
 const authUser=require('./Router/userRouter')
-app.use('/',authUser)
+app.use('/api',authUser)
