@@ -4,12 +4,12 @@ const user=require("../Controller/userController")
 const tryCatch=require('../Middleware/tryCatch')
 
 router
-.post("/user/register",tryCatch(user.userRegistration))
-.post("/user/login",tryCatch(user.userLogin)) 
-.post("/user/login/:id",tryCatch(user.verifyOtp))
-.post('/user/resend',tryCatch(user.userLogin))
-.post("/user/forgot/password",tryCatch(user.forgotPassword))
-.post("/user/create/password/:id",tryCatch(user.createPassword))
+.post("/register",tryCatch(user.userRegistration))
+.post("/login",tryCatch(user.userLogin)) 
+.post("/login/:id",tryCatch(user.verifyOtp))
+.post('/resend',tryCatch(user.userLogin))
+.post("/forgot/password",tryCatch(user.forgotPassword))
+.post("/create/password/:id",tryCatch(user.createPassword))
 
 
 

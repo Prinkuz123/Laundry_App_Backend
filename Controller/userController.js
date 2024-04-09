@@ -18,7 +18,7 @@ module.exports = {
 
     // Prepare the query to find an existing user based on email or phone number
     const findCategory = email ? { email } : { phoneNumber };
-    
+
     // Check if user already exists
     const user = await userModel.findOne(findCategory);
     if (user) {
@@ -50,25 +50,24 @@ module.exports = {
   //------------userLogin-------------
   userLogin: async (req, res) => {
     const { email, password, phoneNumber } = req.body;
-    const findCategory={}
-    if(email){
-      findCategory.email=email
+    //performing combined check for email or phone number
+    const findCategory = {};
+    if (email) {
+      findCategory.email = email;
+    } else if (phoneNumber) {
+      findCategory.phoneNumber = phoneNumber;
+    } else {
+      return res.status(400).json({
+        message: "Missing required fields email or phoneNumber",
+        status: "failure",
+      });
     }
-    else if(phoneNumber){
-      findCategory.phoneNumber=phoneNumber
-    }
-else{
-  return res.status(400).json({
-    message:"Missing required fields email or phoneNumber",
-    status:"failure"
-  })
-}
-   
 
     const findUser = await userModel.findOne(findCategory);
     if (!findUser || !(await bcrypt.compare(password, findUser.password))) {
-     return  res.status(401).json({
+      return res.status(401).json({
         staus: "failure",
+
         message: "Invalid email,phoneNumber or password ",
       });
     }
@@ -85,114 +84,117 @@ else{
       findUser._id,
       findUser.userName
     );
-  
+
     res.status(200).json({
       status: "success",
       message: otpMessage,
       data: data,
     });
   },
-  
-
 
   //-------otp verification------
- 
-  verifyOtp:async(req,res)=>{
-   const {otp}=req.body
-    const userId=req.params.id
+
+  verifyOtp: async (req, res) => {
+    const { otp } = req.body;
+    const userId = req.params.id;
     //to convert to number
-    const numOtp=+otp
+    const numOtp = +otp;
     // console.log(numOtp)
-    const findOtp=await otpModel.findOne({userId}).sort({createdAt:-1}).limit(-1)
-// console.log("findOtP",findOtp)
-    if(!findOtp){
-     return  res.status(400).json(
-      {  message:"Incorrect  otp number",
-        status:"failure"}
-      )
+    const findOtp = await otpModel
+      .findOne({ userId })
+      .sort({ createdAt: -1 })
+      .limit(-1)
+      // .populate(userId);
+    // console.log("findOtP",findOtp)
+    if (!findOtp.length) {
+      return res
+        .status(400)
+        .json({ message: "Incorrect  otp number", status: "failure" });
     }
     // const findOtpData=findOtp[0]
-     const otpData=findOtp.otp
-     if(otpData!==numOtp){
-return res.status(400).json({
-  message:"Incorrect Otp",
-  status:"failure"
+    const otpData = findOtp.otp;
+    if (otpData !== numOtp) {
+      return res.status(400).json({
+        message: "Incorrect Otp",
+        status: "failure",
+      });
+    }
 
-})
-     }
+const secret=process.env.SECRET_KEY
+const token=jwt.sign(
+{
+  userId:userId
+},
+secret,{expiresIn:"24h"}
+)
 
-     return res.status(200).json({
-      message:" OTP Validation success",
-      status:"Success"
-     })
+
+
+    return res.status(200).json({
+      message: " OTP Validation success",
+      status: "Success",
+    });
   },
 
-
   //-----------forgotpassword--------------
- forgotPassword:async(req,res)=>{
-  const{email,phoneNumber}=req.body
+  forgotPassword: async (req, res) => {
+    const { email, phoneNumber } = req.body;
 
-  let findCriteria={}
-  if(email){
-findCriteria.email=email
-  }
-  else if(phoneNumber){
-    findCriteria.phoneNumber=phoneNumber
-  }
-  else return res.status(400).json({
-    message:"Missing required fields: email or password",
-    status:"failure"
-  })
-const findUser= await userModel.findOne(findCriteria)
-console.log(findUser)
-if(!findUser){
-  return res.staus(400).json({
-    message:"User not found",
-    status:"Failure"
-  })
-}
-const {otpMessage,data}=await sendOtpAndSave(
-  email,
+    let findCriteria = {};
+    if (email) {
+      findCriteria.email = email;
+    } else if (phoneNumber) {
+      findCriteria.phoneNumber = phoneNumber;
+    } else
+      return res.status(400).json({
+        message: "Missing required fields: email or password",
+        status: "failure",
+      });
+    const findUser = await userModel.findOne(findCriteria);
+    console.log(findUser);
+    if (!findUser) {
+      return res.staus(400).json({
+        message: "User not found",
+        status: "Failure",
+      });
+    }
+    const { otpMessage, data } = await sendOtpAndSave(
+      email,
       phoneNumber,
       findUser._id,
       findUser.userName
-)
-return res.status(200).json({
-  message:otpMessage,
-  status:"success",
-  data:data
-}) 
+    );
+    return res.status(200).json({
+      message: otpMessage,
+      status: "success",
+      data: data,
+    });
   },
-
 
   // ----------------create password-----------
 
-  createPassword: async (req,res)=>{
-    const{newPassword}=req.body
+  createPassword: async (req, res) => {
+    const { newPassword } = req.body;
     // console.log(req.body);
-    const userId=req.params.id
-    const hashedPassword=await bcrypt.hash(newPassword,10)
+    const userId = req.params.id;
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
     // const hashedPassword = await bcrypt.hash(password, 10);
 
     // console.log(hashedPassword);
-    const updatedUser=await userModel.findByIdAndUpdate(userId,{password:hashedPassword},{new:true})
-    if(!updatedUser){
-     return  res.status(400).json({
-        message:"User not found",
-        status:"Failure",
-
-      })
-
+    const updatedUser = await userModel.findByIdAndUpdate(
+      userId,
+      { password: hashedPassword },
+      { new: true }
+    );
+    if (!updatedUser) {
+      return res.status(400).json({
+        message: "User not found",
+        status: "Failure",
+      });
     }
     return res.status(200).json({
-      message:"Password updated successfully",
-      satus:"success"
-    })
-
-
-  }
-
-
-
+      message: "Password updated successfully",
+      satus: "success",
+    });
+  },
 };
-
