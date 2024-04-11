@@ -41,6 +41,7 @@ module.exports = {
 
     // Respond with success message
     return res.status(200).json({
+      error:false,
       message: "User registered successfully. Please login.",
       status: "success",
       data: newUser,
