@@ -1,6 +1,8 @@
 const adminSchema=require("../Model/adminSchema")
-
+const categorySchema=require('../Model/categoriesSchema')
 module.exports={
+
+    //-------admin login-----
    adminLogin: async(req,res)=>{
     const {userName,passWord}=req.body
 
@@ -19,6 +21,22 @@ res.status(401).json({
 })
 
 
-   }
+   },
+   //---create categories------
+ addCategories:async (req,res)=>{
+    const categories=new categorySchema(req.body)
+    const newCategory= await categories.save()
+    // console.log(newCategory)
+res.json({
+    message:"Categories added ",
+status:"Success",
+data:newCategory
+}) 
+},
+//------getAllUsers-----
+getAllUsers:async(req,res)=>{
+
+}
+
     
 }

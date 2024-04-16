@@ -8,6 +8,8 @@ app.use(express.json())
 app.get('/',(req,res)=>{
     res.send("hi aall")
 })
+
+
 //Connecting mongodb 
 const Url=process.env.DB_URL
 mongoose.connect(Url)
@@ -24,3 +26,5 @@ app.listen(Port,()=>{
 
 const authUser=require('./Router/userRouter')
 app.use('/api',authUser)
+const authAdmin=require("./Router/adminRouter")
+app.use("/api",authAdmin)
