@@ -3,6 +3,7 @@ const router=express.Router()
 const user=require("../Controller/userController")
 const tryCatch=require('../Middleware/tryCatch')
 const adminController = require('../Controller/adminController')
+const userController = require('../Controller/userController')
 
 router
 .post("/register",tryCatch(user.userRegistration))
@@ -13,8 +14,8 @@ router
 .post("/create/password/:id",tryCatch(user.createPassword))
 .get("/getallcategory",tryCatch(adminController.getAllCategories))
 .get("/getallitems",tryCatch(adminController.getAllItems))
-
- 
+.post('/addInstructions',tryCatch(adminController.addInstructions))
+.post ("/addAddress/:id",tryCatch(userController.addAddressOfUser))
 
 
 

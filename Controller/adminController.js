@@ -1,6 +1,8 @@
 // const adminSchema=require("../Model/adminSchema")
 const categorySchema=require('../Model/categoriesSchema')
 const itemSchema=require("../Model/itemSchema")
+const instructionSchema=require("../Model/instructionSchema")
+const userSchema=require("../Model/userSchema")
 
 module.exports={
 
@@ -22,6 +24,21 @@ res.status(401).json({
     message:"Wrong password or username"
 })
 
+
+},
+getAllUsers:async(req,res)=>{
+    const findUser= await userSchema.find()
+    if (!findUser){
+res.status(400).json({
+    message:"No user found",
+    status:"failure"
+})
+    }
+    res.status(200).json({
+        message:"Users found",
+        status:"success",
+        data:findUser
+    })
 
 },
 
@@ -107,6 +124,19 @@ getAllItems:async(req,res)=>{
         status:"success",
         data:findItems
     })
+},
+//-------post instructions------
+addInstructions:async(req,res)=>{
+    const {water,fabricSoftener,detergent,note}=req.body
+    const newInstruction=new instructionSchema({
+        water,fabricSoftener,detergent,note
+    })
+    await newInstruction.save()
+    res.status(200).json({
+        message:"Instructions posted",
+        status:"success",
+        data:newInstruction
+    })   
 }
 
     

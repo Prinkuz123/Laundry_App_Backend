@@ -198,4 +198,28 @@ secret,{expiresIn:"24h"}
       satus: "success",
     });
   },
+
+  //--add address of user ----
+  addAddressOfUser:async(req,res)=>{
+    const {userId}=req.params
+    const{address}=req.body
+
+    const existinguser= await userModel.findById(userId)
+if(!existinguser){
+  res.status(400).json({
+    message:"No user found",
+    status:"failure"
+  })
+  // console.log(address);
+  // console.log(existinguser); 
+  existinguser.address=address
+  
+  await existinguser.save()
+res.status(200).json({
+  message:"Address added to user",
+  status:"success",
+  data:existinguser
+})
+}
+  }
 };

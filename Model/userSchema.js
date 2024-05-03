@@ -3,7 +3,8 @@ const userSchema = new mongoose.Schema({
   userName: { type:String, required: true},
   email: { type:String},
   password:{type:String,required:true},
-  phoneNumber:{type:Number}
+  phoneNumber:{type:Number},
+  address:{type:String}
 });
 const user = mongoose.model("user", userSchema);
 module.exports = user;
