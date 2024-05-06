@@ -16,7 +16,7 @@ router
 .get("/getallitems",tryCatch(adminController.getAllItems))
 .post('/addInstructions',tryCatch(adminController.addInstructions))
 .post ("/addAddress/:id",tryCatch(userController.addAddressOfUser))
-
+// router.post("/addAddress/:userId", tryCatch(userController.addAddressOfUser));
 
 
 module.exports=router

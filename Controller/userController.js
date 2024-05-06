@@ -200,26 +200,54 @@ secret,{expiresIn:"24h"}
   },
 
   //--add address of user ----
-  addAddressOfUser:async(req,res)=>{
-    const {userId}=req.params
-    const{address}=req.body
 
-    const existinguser= await userModel.findById(userId)
-if(!existinguser){
-  res.status(400).json({
-    message:"No user found",
-    status:"failure"
-  })
-  // console.log(address);
-  // console.log(existinguser); 
-  existinguser.address=address
-  
-  await existinguser.save()
-res.status(200).json({
-  message:"Address added to user",
-  status:"success",
-  data:existinguser
-})
-}
-  }
+
+addAddressOfUser: async (req, res) => {
+  const { id } = req.params;
+  const { street, city, state, postalCode } = req.body;
+      const existingUser = await userModel.findById(id);
+      if (!existingUser) {
+          return res.status(400).json({
+              message: "No user found",
+              status: "failure"
+          });
+      }  
+    // Check if the address already exists
+    const addressExists = existingUser.address.some(address => 
+      address.street === street &&
+      address.city === city &&
+      address.state === state &&
+      address.postalCode === postalCode
+    );
+
+    if (addressExists) {
+      return res.status(400).json({
+        message: "This address already exists for the user",
+        status: "failure"
+      });
+    }
+ // Construct the new address object
+ const newAddress = {
+  street,
+  city,
+  state,
+  postalCode
+};
+    // Update the user's address
+existingUser.address.push (newAddress);
+    // Save the updated user document
+  await existingUser.save();
+  return res.status(200).json({
+  message: "Address added to user",
+  status: "success",
+  data: existingUser
+      });
+
+},
+
+
+//-----Edit address---------
+ed
+
+
 };

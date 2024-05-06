@@ -4,7 +4,14 @@ const userSchema = new mongoose.Schema({
   email: { type:String},
   password:{type:String,required:true},
   phoneNumber:{type:Number},
-  address:{type:String}
+   address: [
+    {
+      street: { type: String },
+      city: { type: String },
+      state: { type: String },
+      postalCode: { type: String }
+    },{unique:true}
+  ]
 });
 const user = mongoose.model("user", userSchema);
 module.exports = user;
