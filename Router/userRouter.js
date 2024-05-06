@@ -16,6 +16,7 @@ router
 .get("/getallitems",tryCatch(adminController.getAllItems))
 .post('/addInstructions',tryCatch(adminController.addInstructions))
 .post ("/addAddress/:id",tryCatch(userController.addAddressOfUser))
+.put("/updateAddress/:id/address/:id",tryCatch(userController.editAddressOfUser))
 // router.post("/addAddress/:userId", tryCatch(userController.addAddressOfUser));
 
 

@@ -247,7 +247,39 @@ existingUser.address.push (newAddress);
 
 
 //-----Edit address---------
-ed
+editAddressOfUser:async(req,res)=>{
+  const id=req.params.id
+  const address_id=req.params.id
+  const { street, city, state, postalCode } = req.body;
+  const existingUser=await userModel.findById(id)
+  console.log(existingUser);
+  if (!existingUser){
+res.status(400).json({
+  message:"No user found",
+  status:"failure"
+})
+}
+const addressToUpdate=existingUser.address.id(address_id)
+console.log(addressToUpdate);
+if(!addressToUpdate){
+  return res.status(400).json({
+    message:"Address not found for the user",
+    status:"failure"
+
+
+  })
+}
+addressToUpdate.street=street,
+addressToUpdate.city = city;
+addressToUpdate.state = state;
+addressToUpdate.postalCode = postalCode;
+await existingUser.save();
+return res.status(200).json({
+  message: "Address updated successfully",
+  status: "success",
+  data: addressToUpdate
+});
+}
 
 
 };
