@@ -1,6 +1,7 @@
 const userModel = require("../Model/userSchema");
 const bcrypt = require("bcrypt");
 const otpModel = require("../Model/otepSchema");
+const jwt=require("jsonwebtoken")
 // const { sendEmail } = require("../utils/nodeMailer");
 const { sendOtpAndSave } = require("../utils/sendOtp");
 
@@ -97,23 +98,27 @@ module.exports = {
 
   verifyOtp: async (req, res) => {
     const { otp } = req.body;
+    console.log(otp);
     const userId = req.params.id;
+    console.log(userId);  
     //to convert to number
     const numOtp = +otp;
+  
     // console.log(numOtp)
     const findOtp = await otpModel
       .findOne({ userId })
       .sort({ createdAt: -1 })
       .limit(-1)
       // .populate(userId);
-    // console.log("findOtP",findOtp)
-    if (!findOtp.length) {
+    console.log("findOtP",findOtp)
+    if (!findOtp) {
       return res
         .status(400)
         .json({ message: "Incorrect  otp number", status: "failure" });
     }
     // const findOtpData=findOtp[0]
     const otpData = findOtp.otp;
+    console.log("otpdaata:-",otpData);
     if (otpData !== numOtp) {
       return res.status(400).json({
         message: "Incorrect Otp",
@@ -134,6 +139,7 @@ secret,{expiresIn:"24h"}
     return res.status(200).json({
       message: " OTP Validation success",
       status: "Success",
+      data:token
     });
   },
 
@@ -249,9 +255,10 @@ existingUser.address.push (newAddress);
 //-----Edit address---------
 editAddressOfUser:async(req,res)=>{
   const id=req.params.id
+  console.log(id);
   const address_id=req.params.id
   const { street, city, state, postalCode } = req.body;
-  const existingUser=await userModel.findById(id)
+  const existingUser=await userModel.find({id})
   console.log(existingUser);
   if (!existingUser){
 res.status(400).json({
