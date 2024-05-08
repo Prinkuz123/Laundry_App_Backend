@@ -90,13 +90,14 @@ module.exports = {
     res.status(200).json({
       status: "success",
       message: otpMessage,
-      data: data,
+      data:findUser._id
+     
     });
   },
 
   //-------otp verification------
 
-  verifyOtp: async (req, res) => {
+  verifyOtp: async (req, res) => { 
     const { otp } = req.body;
     console.log(otp);
     const userId = req.params.id;
@@ -254,12 +255,14 @@ existingUser.address.push (newAddress);
 
 //-----Edit address---------
 editAddressOfUser:async(req,res)=>{
-  const id=req.params.id
-  console.log(id);
+  // const id=req.params.id
+  const userId=req.user?.userId;
+  console.log("userid",userId);
   const address_id=req.params.id
+  console.log("addressid",address_id);
   const { street, city, state, postalCode } = req.body;
-  const existingUser=await userModel.find({id})
-  console.log(existingUser);
+  const existingUser=await userModel.findById(userId)
+  console.log("existingUser",existingUser);
   if (!existingUser){
 res.status(400).json({
   message:"No user found",

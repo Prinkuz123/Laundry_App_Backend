@@ -4,7 +4,7 @@ const user=require("../Controller/userController")
 const tryCatch=require('../Middleware/tryCatch')
 const adminController = require('../Controller/adminController')
 const userController = require('../Controller/userController')
-const {verifyToken}=require('../utils/jwtToken')
+const {tokenVerifyUser}=require('../utils/jwtToken')
 
 router
 .post("/register",tryCatch(user.userRegistration))
@@ -17,7 +17,7 @@ router
 .get("/getallitems",tryCatch(adminController.getAllItems))
 .post('/addInstructions',tryCatch(adminController.addInstructions))
 .post ("/addAddress/:id",tryCatch(userController.addAddressOfUser))
-.put("/updateAddress/:id/address/:id",verifyToken,tryCatch(userController.editAddressOfUser))
+.put("/updateAddress/address/:id",tokenVerifyUser,tryCatch(userController.editAddressOfUser))
 // router.post("/addAddress/:userId", tryCatch(userController.addAddressOfUser));
 
 
