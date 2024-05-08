@@ -80,7 +80,7 @@ module.exports = {
         status: "failure",
       });
     }
-    const { otpMessage, data } = await sendOtpAndSave(
+    const { otpMessage } = await sendOtpAndSave(
       email,
       phoneNumber,
       findUser._id,
