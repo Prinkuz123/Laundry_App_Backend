@@ -11,13 +11,14 @@ router
 .post("/login",tryCatch(user.userLogin)) 
 .post("/login/:id",tryCatch(user.verifyOtp))
 .post('/resend',tryCatch(user.userLogin))
-.post("/forgot/password",tryCatch(user.forgotPassword))
-.post("/create/password/:id",tryCatch(user.createPassword))
+.post("/forgotpassword",tryCatch(user.forgotPassword))
+.post("/createpassword/:id",tryCatch(user.createPassword))
 .get("/getallcategory",tryCatch(adminController.getAllCategories))
 .get("/getallitems",tryCatch(adminController.getAllItems))
 .post('/addInstructions',tryCatch(adminController.addInstructions))
 .post ("/addAddress/:id",tryCatch(userController.addAddressOfUser))
 .put("/updateAddress/address/:id",tokenVerifyUser,tryCatch(userController.editAddressOfUser))
+.get("/getUser",tokenVerifyUser,tryCatch(adminController.getAllUsers))
 // router.post("/addAddress/:userId", tryCatch(userController.addAddressOfUser));
 
 

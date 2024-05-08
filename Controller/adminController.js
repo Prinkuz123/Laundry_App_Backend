@@ -27,8 +27,10 @@ res.status(401).json({
 
 },
 getAllUsers:async(req,res)=>{
-    const findUser= await userSchema.find()
-    if (!findUser){
+    const query=req?.user?.userId
+    console.log("query",query);
+    const findUser= await userSchema.find({query})
+    if (findUser.length===0){
 res.status(400).json({
     message:"No user found",
     status:"failure"

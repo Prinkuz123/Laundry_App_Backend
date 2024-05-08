@@ -140,7 +140,7 @@ secret,{expiresIn:"24h"}
     return res.status(200).json({
       message: " OTP Validation success",
       status: "Success",
-      data:token
+      token:token
     });
   },
 
@@ -175,7 +175,7 @@ secret,{expiresIn:"24h"}
     return res.status(200).json({
       message: otpMessage,
       status: "success",
-      data: data,
+      data: findUser._id,
     });
   },
 
