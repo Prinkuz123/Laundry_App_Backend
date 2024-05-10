@@ -9,7 +9,7 @@ const {tokenVerifyUser}=require('../utils/jwtToken')
 router
 .post("/register",tryCatch(user.userRegistration))
 .post("/login",tryCatch(user.userLogin)) 
-.post("/login/:id",tryCatch(user.verifyOtp))
+.post("/verify/:id",tryCatch(user.verifyOtp))
 .post('/resend',tryCatch(user.userLogin))
 .post("/forgotpassword",tryCatch(user.forgotPassword))
 .post("/createpassword/:id",tryCatch(user.createPassword))

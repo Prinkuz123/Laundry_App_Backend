@@ -90,7 +90,7 @@ module.exports = {
     res.status(200).json({
       status: "success",
       message: otpMessage,
-      data:findUser._id
+      id:findUser._id
      
     });
   },
@@ -157,26 +157,26 @@ secret,{expiresIn:"24h"}
       return res.status(400).json({
         message: "Missing required fields: email or password",
         status: "failure",
-      });
+      })
     const findUser = await userModel.findOne(findCriteria);
     console.log(findUser);
     if (!findUser) {
       return res.staus(400).json({
         message: "User not found",
         status: "Failure",
-      });
+      })
     }
     const { otpMessage, data } = await sendOtpAndSave(
       email,
       phoneNumber,
       findUser._id,
       findUser.userName
-    );
+    )
     return res.status(200).json({
       message: otpMessage,
       status: "success",
-      data: findUser._id,
-    });
+      id: findUser._id,
+    })
   },
 
   // ----------------create password-----------
@@ -202,7 +202,7 @@ secret,{expiresIn:"24h"}
     }
     return res.status(200).json({
       message: "Password updated successfully",
-      satus: "success",
+      status: "success",
     });
   },
 

@@ -9,10 +9,10 @@ module.exports={
             })
         }
         const token=authHeader.split(" ")[1]
-        console.log(token);
+        // console.log(token);
         jwt.verify(token,process.env.SECRET_KEY,async(err,decoded)=>{
             if(err){
-                return res.status(403).json({
+                return res.status(403).json({ 
                     error:"Invalid token "
                 })
             }

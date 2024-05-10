@@ -27,9 +27,9 @@ res.status(401).json({
 
 },
 getAllUsers:async(req,res)=>{
-    const query=req?.user?.userId
-    console.log("query",query);
-    const findUser= await userSchema.find({query})
+    // const query=req?.user?.userId
+    // console.log("query",query);
+    const findUser= await userSchema.find()
     if (findUser.length===0){
 res.status(400).json({
     message:"No user found",
@@ -42,6 +42,23 @@ res.status(400).json({
         data:findUser
     })
 
+},
+getUserById:async(req,res)=>{
+const id=req.user.userId
+console.log(id);
+const findUser= await userSchema.findById(id)
+console.log("finduser:",findUser);
+if(!findUser){
+    res.status(400).json({
+        message:"User not found ",
+        status:"failure"
+    })
+}
+res.status(200).json({
+    "message":"User found",
+    status:"success",
+    user:findUser
+})
 },
 
 uploadCategoryAndImage:async(req,res)=>{

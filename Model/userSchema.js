@@ -12,6 +12,8 @@ const userSchema = new mongoose.Schema({
       postalCode: { type: String }
     },{unique:true}
   ]
+},{ 
+  versionKey: false // Setting versionKey to false to exclude the __v field
 });
 const user = mongoose.model("user", userSchema);
 module.exports = user;
