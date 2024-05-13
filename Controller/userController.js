@@ -1,6 +1,7 @@
 const userModel = require("../Model/userSchema");
 const bcrypt = require("bcrypt");
 const otpModel = require("../Model/otepSchema");
+const itemModel=require("../Model/itemSchema")
 const jwt=require("jsonwebtoken")
 // const { sendEmail } = require("../utils/nodeMailer");
 const { sendOtpAndSave } = require("../utils/sendOtp");
@@ -107,7 +108,7 @@ module.exports = {
   
     // console.log(numOtp)
     const findOtp = await otpModel
-      .findOne({ userId })
+      .findOne({ userId})
       .sort({ createdAt: -1 })
       .limit(-1)
       // .populate(userId);
@@ -210,9 +211,11 @@ secret,{expiresIn:"24h"}
 
 
 addAddressOfUser: async (req, res) => {
-  const { id } = req.params;
+  const  userId  = req.user.userId;
+  console.log("userId",userId);
   const { street, city, state, postalCode } = req.body;
-      const existingUser = await userModel.findById(id);
+      const existingUser = await userModel.findById(userId);
+      console.log("existingUser",existingUser);
       if (!existingUser) {
           return res.status(400).json({
               message: "No user found",
@@ -285,11 +288,52 @@ addressToUpdate.state = state;
 addressToUpdate.postalCode = postalCode;
 await existingUser.save();
 return res.status(200).json({
+  error:"false",
   message: "Address updated successfully",
   status: "success",
   data: addressToUpdate
 });
-}
+},
+
+
+postDetailsOfCategoryAndItems: async (req, res) => {
+  const userId = req.user.userId;
+  const { itemName, itemPrice, itemQuantity, total, category } = req.body;
+
+  const existingUser = await userModel.findById(userId);
+  if (!existingUser) {
+    return res.status(400).json({
+      message: "No user found",
+      status: "failure"
+    });
+  }
+
+  // Create a new category object
+  const newCategory = {
+    name: category,
+    items: [{
+      itemName: itemName,
+      itemPrice: itemPrice,
+      itemQuantity: itemQuantity,
+      total: total
+    }]
+  };
+
+  // Add the new category to the user's categories
+  existingUser.categories.push(newCategory);
+
+  // Save the updated user document
+  await existingUser.save();
+
+  return res.status(200).json({
+    error: false,
+    message: "Category and item successfully added",
+    status: "Success",
+    data: existingUser
+  });
+},
+
+
 
 
 };

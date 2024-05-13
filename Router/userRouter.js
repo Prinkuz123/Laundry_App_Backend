@@ -16,11 +16,10 @@ router
 .get("/getallcategory",tryCatch(adminController.getAllCategories))
 .get("/getallitems",tryCatch(adminController.getAllItems))
 .post('/addInstructions',tryCatch(adminController.addInstructions))
-.post ("/addAddress/:id",tryCatch(userController.addAddressOfUser))
+.post ("/addAddress",tokenVerifyUser,tryCatch(userController.addAddressOfUser))
 .put("/updateAddress/address/:id",tokenVerifyUser,tryCatch(userController.editAddressOfUser))
 .get("/getUser",tokenVerifyUser,tryCatch(adminController.getAllUsers))
-// router.post("/addAddress/:userId", tryCatch(userController.addAddressOfUser));
-
+.post("/postCategoryAndItems",tokenVerifyUser,tryCatch(user.postDetailsOfCategoryAndItems))
 
 module.exports=router
 

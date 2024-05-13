@@ -15,6 +15,6 @@ router
 .post("/admin/items/upload",upload.single("file"),tryCatch(adminController.addItems))
 .get("/admin/getItems",tryCatch(adminController.getAllItems))
 .post("/admin/addInstructions",tryCatch(adminController.addInstructions))
-.get("/admin/getUser",tokenVerifyUser,tryCatch(adminController.getUserById))
+.get("/admin/getUser",tokenVerifyUser,tryCatch(adminController.getUser))
 
 module.exports=router
