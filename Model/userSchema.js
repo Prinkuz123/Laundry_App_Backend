@@ -24,28 +24,18 @@ const userSchema = new mongoose.Schema(
       type: Date,
       expires: 60,
     },
-    categories: [{
-      name: { type: String, required: true }, // Name of the category
-      items: [{
-        itemName: { type: String ,required:true},
-        itemPrice: { type: Number ,required:true},
-        itemQuantity: { type: Number,required:true },
-        total: { type: Number,required:true }
-      }]
-    }]
+    // categories: [{
+    //   name: { type: String, required: true }, // Name of the category
+    //   items: [{
+    //     itemName: { type: String ,required:true},
+    //     itemPrice: { type: Number ,required:true},
+    //     itemQuantity: { type: Number,required:true },
+    //     total: { type: Number,required:true }
+    //   }]
+    // }]
   
-
-    // category:{type:String,require:true},
-    // item: [
-    //   {
-    //     itemName: { type: String },
-    //     itemQuantity: { type: Number },
-    //     itemPrice:{type:Number},
-    //     total: { type: Number },
-    //   }
-    // ],
   },
-  {
+  { 
     versionKey: false, // Setting versionKey to false to exclude the __v field
   }
 );

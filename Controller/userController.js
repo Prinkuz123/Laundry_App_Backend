@@ -1,8 +1,9 @@
 const userModel = require("../Model/userSchema");
 const bcrypt = require("bcrypt");
 const otpModel = require("../Model/otepSchema");
-const itemModel=require("../Model/itemSchema")
-const jwt=require("jsonwebtoken")
+const itemModel = require("../Model/itemSchema");
+const orderModel = require("../Model/orderSchema");
+const jwt = require("jsonwebtoken");
 // const { sendEmail } = require("../utils/nodeMailer");
 const { sendOtpAndSave } = require("../utils/sendOtp");
 
@@ -43,7 +44,7 @@ module.exports = {
 
     // Respond with success message
     return res.status(200).json({
-      error:false,
+      error: false,
       message: "User registered successfully. Please login.",
       status: "success",
       data: newUser,
@@ -91,28 +92,27 @@ module.exports = {
     res.status(200).json({
       status: "success",
       message: otpMessage,
-      id:findUser._id
-     
+      id: findUser._id,
     });
   },
 
   //-------otp verification------
 
-  verifyOtp: async (req, res) => { 
+  verifyOtp: async (req, res) => {
     const { otp } = req.body;
     console.log(otp);
     const userId = req.params.id;
-    console.log(userId);  
+    console.log(userId);
     //to convert to number
     const numOtp = +otp;
-  
+
     // console.log(numOtp)
     const findOtp = await otpModel
-      .findOne({ userId})
+      .findOne({ userId })
       .sort({ createdAt: -1 })
-      .limit(-1)
-      // .populate(userId);
-    console.log("findOtP",findOtp)
+      .limit(-1);
+    // .populate(userId);
+    console.log("findOtP", findOtp);
     if (!findOtp) {
       return res
         .status(400)
@@ -120,7 +120,7 @@ module.exports = {
     }
     // const findOtpData=findOtp[0]
     const otpData = findOtp.otp;
-    console.log("otpdaata:-",otpData);
+    console.log("otpdaata:-", otpData);
     if (otpData !== numOtp) {
       return res.status(400).json({
         message: "Incorrect Otp",
@@ -128,20 +128,19 @@ module.exports = {
       });
     }
 
-const secret=process.env.SECRET_KEY
-const token=jwt.sign(
-{
-  userId:userId
-},
-secret,{expiresIn:"24h"}
-)
-
-
+    const secret = process.env.SECRET_KEY;
+    const token = jwt.sign(
+      {
+        userId: userId,
+      },
+      secret,
+      { expiresIn: "24h" }
+    );
 
     return res.status(200).json({
       message: " OTP Validation success",
       status: "Success",
-      token:token
+      token: token,
     });
   },
 
@@ -158,26 +157,26 @@ secret,{expiresIn:"24h"}
       return res.status(400).json({
         message: "Missing required fields: email or password",
         status: "failure",
-      })
+      });
     const findUser = await userModel.findOne(findCriteria);
     console.log(findUser);
     if (!findUser) {
       return res.staus(400).json({
         message: "User not found",
         status: "Failure",
-      })
+      });
     }
     const { otpMessage, data } = await sendOtpAndSave(
       email,
       phoneNumber,
       findUser._id,
       findUser.userName
-    )
+    );
     return res.status(200).json({
       message: otpMessage,
       status: "success",
       id: findUser._id,
-    })
+    });
   },
 
   // ----------------create password-----------
@@ -209,131 +208,158 @@ secret,{expiresIn:"24h"}
 
   //--add address of user ----
 
-
-addAddressOfUser: async (req, res) => {
-  const  userId  = req.user.userId;
-  console.log("userId",userId);
-  const { street, city, state, postalCode } = req.body;
-      const existingUser = await userModel.findById(userId);
-      console.log("existingUser",existingUser);
-      if (!existingUser) {
-          return res.status(400).json({
-              message: "No user found",
-              status: "failure"
-          });
-      }  
+  addAddressOfUser: async (req, res) => {
+    const userId = req.user.userId;
+    console.log("userId", userId);
+    const { street, city, state, postalCode } = req.body;
+    const existingUser = await userModel.findById(userId);
+    console.log("existingUser", existingUser);
+    if (!existingUser) {
+      return res.status(400).json({
+        message: "No user found",
+        status: "failure",
+      });
+    }
     // Check if the address already exists
-    const addressExists = existingUser.address.some(address => 
-      address.street === street &&
-      address.city === city &&
-      address.state === state &&
-      address.postalCode === postalCode
+    const addressExists = existingUser.address.some(
+      (address) =>
+        address.street === street &&
+        address.city === city &&
+        address.state === state &&
+        address.postalCode === postalCode
     );
 
     if (addressExists) {
       return res.status(400).json({
         message: "This address already exists for the user",
-        status: "failure"
+        status: "failure",
       });
     }
- // Construct the new address object
- const newAddress = {
-  street,
-  city,
-  state,
-  postalCode
-};
+    // Construct the new address object
+    const newAddress = {
+      street,
+      city,
+      state,
+      postalCode,
+    };
     // Update the user's address
-existingUser.address.push (newAddress);
+    existingUser.address.push(newAddress);
     // Save the updated user document
-  await existingUser.save();
-  return res.status(200).json({
-  message: "Address added to user",
-  status: "success",
-  data: existingUser
-      });
-
-},
-
-
-//-----Edit address---------
-editAddressOfUser:async(req,res)=>{
-  // const id=req.params.id
-  const userId=req.user?.userId;
-  console.log("userid",userId);
-  const address_id=req.params.id
-  console.log("addressid",address_id);
-  const { street, city, state, postalCode } = req.body;
-  const existingUser=await userModel.findById(userId)
-  console.log("existingUser",existingUser);
-  if (!existingUser){
-res.status(400).json({
-  message:"No user found",
-  status:"failure"
-})
-}
-const addressToUpdate=existingUser.address.id(address_id)
-console.log(addressToUpdate);
-if(!addressToUpdate){
-  return res.status(400).json({
-    message:"Address not found for the user",
-    status:"failure"
-
-
-  })
-}
-addressToUpdate.street=street,
-addressToUpdate.city = city;
-addressToUpdate.state = state;
-addressToUpdate.postalCode = postalCode;
-await existingUser.save();
-return res.status(200).json({
-  error:"false",
-  message: "Address updated successfully",
-  status: "success",
-  data: addressToUpdate
-});
-},
-
-
-postDetailsOfCategoryAndItems: async (req, res) => {
-  const userId = req.user.userId;
-  const { itemName, itemPrice, itemQuantity, total, category } = req.body;
-
-  const existingUser = await userModel.findById(userId);
-  if (!existingUser) {
-    return res.status(400).json({
-      message: "No user found",
-      status: "failure"
+    await existingUser.save();
+    return res.status(200).json({
+      message: "Address added to user",
+      status: "success",
+      data: existingUser,
     });
-  }
+  },
 
-  // Create a new category object
-  const newCategory = {
-    name: category,
-    items: [{
-      itemName: itemName,
-      itemPrice: itemPrice,
-      itemQuantity: itemQuantity,
-      total: total
-    }]
-  };
+  //-----Edit address---------
+  editAddressOfUser: async (req, res) => {
+    // const id=req.params.id
+    const userId = req.user?.userId;
+    console.log("userid", userId);
+    const address_id = req.params.id;
+    console.log("addressid", address_id);
+    const { street, city, state, postalCode } = req.body;
+    const existingUser = await userModel.findById(userId);
+    console.log("existingUser", existingUser);
+    if (!existingUser) {
+      res.status(400).json({
+        message: "No user found",
+        status: "failure",
+      });
+    }
+    const addressToUpdate = existingUser.address.id(address_id);
+    console.log(addressToUpdate);
+    if (!addressToUpdate) {
+      return res.status(400).json({
+        message: "Address not found for the user",
+        status: "failure",
+      });
+    }
+    (addressToUpdate.street = street), (addressToUpdate.city = city);
+    addressToUpdate.state = state;
+    addressToUpdate.postalCode = postalCode;
+    await existingUser.save();
+    return res.status(200).json({
+      error: "false",
+      message: "Address updated successfully",
+      status: "success",
+      data: addressToUpdate,
+    });
+  },
 
-  // Add the new category to the user's categories
-  existingUser.categories.push(newCategory);
+  // postDetailsOfCategoryAndItems: async (req, res) => {
+  //   const userId = req.user.userId;
+  //   const { itemName, itemPrice, itemQuantity, total, category } = req.body;
 
-  // Save the updated user document
-  await existingUser.save();
+  //   const existingUser = await userModel.findById(userId);
+  //   if (!existingUser) {
+  //     return res.status(400).json({
+  //       message: "No user found",
+  //       status: "failure"
+  //     });
+  //   }
 
-  return res.status(200).json({
-    error: false,
-    message: "Category and item successfully added",
-    status: "Success",
-    data: existingUser
-  });
-},
+  //   // Create a new category object
+  //   const newCategory = {
+  //     name: category,
+  //     items: [{
+  //       itemName: itemName,
+  //       itemPrice: itemPrice,
+  //       itemQuantity: itemQuantity,
+  //       total: total
+  //     }]
+  //   };
 
+  //   // Add the new category to the user's categories
+  //   existingUser.categories.push(newCategory);
 
+  //   // Save the updated user document
+  //   await existingUser.save();
+
+  //   return res.status(200).json({
+  //     error: false,
+  //     message: "Category and item successfully added",
+  //     status: "Success",
+  //     data: existingUser
+  //   });
+  // },
+
+  createOrder: async (req, res) => {
+    const userId = req.user.userId;
+    const { itemName, itemPrice, itemQuantity, total, categories } = req.body;
+
+    const User = await userModel.findById(userId);
+    if (!User) {
+      return res.status(400).json({
+        message: "No user found",
+        status: "failure",
+      });
+    }
+    // Construct the order object
+    // Create a new category object
+    const newOrder = new orderModel({
+      userId,
+      categories: categories,
+      items: [
+        {
+          itemName: itemName,
+          itemPrice: itemPrice,
+          itemQuantity: itemQuantity,
+          total: total,
+        },
+      ],
+    });
+    await newOrder.save();
+
+    return res
+      .status(201)
+      .json({ error:"failure",
+      status:"success",
+      message: "Order created successfully", order: newOrder });
+  },
+  
 
 
 };
