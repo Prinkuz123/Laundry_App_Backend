@@ -24,15 +24,7 @@ const userSchema = new mongoose.Schema(
       type: Date,
       expires: 60,
     },
-    // categories: [{
-    //   name: { type: String, required: true }, // Name of the category
-    //   items: [{
-    //     itemName: { type: String ,required:true},
-    //     itemPrice: { type: Number ,required:true},
-    //     itemQuantity: { type: Number,required:true },
-    //     total: { type: Number,required:true }
-    //   }]
-    // }]
+  
   
   },
   { 

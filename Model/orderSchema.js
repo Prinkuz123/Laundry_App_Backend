@@ -10,7 +10,7 @@ const orderSchema= new mongoose.Schema({
         require:true
     },
     timeSlot:{
-        type:Number,
+        type:String,
         require:true
     },
     pickUpAddress:{
@@ -33,6 +33,6 @@ const orderSchema= new mongoose.Schema({
   
 
 
-})
+}, { timestamps: true })
 const Order=mongoose.model("Order",orderSchema)
 module.exports=Order

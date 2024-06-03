@@ -12,6 +12,7 @@ app.get('/',(req,res)=>{
 
 //Connecting mongodb 
 const Url=process.env.DB_URL
+// console.log(Url);
 mongoose.connect(Url)
 .then(()=>{console.log("connected to mongoDB")})
 .catch((e)=>{console.log("Error found",e)})

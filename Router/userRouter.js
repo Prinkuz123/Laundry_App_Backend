@@ -20,6 +20,8 @@ router
 .put("/updateAddress/address/:id",tokenVerifyUser,tryCatch(userController.editAddressOfUser))
 .get("/getUser",tokenVerifyUser,tryCatch(adminController.getAllUsers))
 .post("/createOrder",tokenVerifyUser,tryCatch(user.createOrder))
+.get("/getOrderDetails",tokenVerifyUser,tryCatch(user.getOrderDetails))
+.get('/getAllOrders',tokenVerifyUser,tryCatch(user.getAllOrderDetails))
 
 module.exports=router
 

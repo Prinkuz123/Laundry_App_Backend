@@ -30,7 +30,7 @@ module.exports={
 
              //save otp
         await otp.save()
-        return {otpMessage,userId}
+        return {otpMessage,userId,otpCode}
         }
         else{
             throw new error("failed to send verification code ")

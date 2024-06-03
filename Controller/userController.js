@@ -82,17 +82,19 @@ module.exports = {
         status: "failure",
       });
     }
-    const { otpMessage } = await sendOtpAndSave(
+    const { otpMessage,otpCode } = await sendOtpAndSave(
       email,
       phoneNumber,
       findUser._id,
-      findUser.userName
+      findUser.userName,
+      
     );
 
     res.status(200).json({
       status: "success",
       message: otpMessage,
       id: findUser._id,
+      otp:otpCode
     });
   },
 
@@ -111,8 +113,7 @@ module.exports = {
       .findOne({ userId })
       .sort({ createdAt: -1 })
       .limit(-1);
-    // .populate(userId);
-    console.log("findOtP", findOtp);
+    // console.log("findOtP", findOtp);
     if (!findOtp) {
       return res
         .status(400)
@@ -166,7 +167,7 @@ module.exports = {
         status: "Failure",
       });
     }
-    const { otpMessage, data } = await sendOtpAndSave(
+    const { otpMessage, otpCode} = await sendOtpAndSave(
       email,
       phoneNumber,
       findUser._id,
@@ -176,6 +177,7 @@ module.exports = {
       message: otpMessage,
       status: "success",
       id: findUser._id,
+      otp:otpCode
     });
   },
 
@@ -289,46 +291,11 @@ module.exports = {
     });
   },
 
-  // postDetailsOfCategoryAndItems: async (req, res) => {
-  //   const userId = req.user.userId;
-  //   const { itemName, itemPrice, itemQuantity, total, category } = req.body;
 
-  //   const existingUser = await userModel.findById(userId);
-  //   if (!existingUser) {
-  //     return res.status(400).json({
-  //       message: "No user found",
-  //       status: "failure"
-  //     });
-  //   }
-
-  //   // Create a new category object
-  //   const newCategory = {
-  //     name: category,
-  //     items: [{
-  //       itemName: itemName,
-  //       itemPrice: itemPrice,
-  //       itemQuantity: itemQuantity,
-  //       total: total
-  //     }]
-  //   };
-
-  //   // Add the new category to the user's categories
-  //   existingUser.categories.push(newCategory);
-
-  //   // Save the updated user document
-  //   await existingUser.save();
-
-  //   return res.status(200).json({
-  //     error: false,
-  //     message: "Category and item successfully added",
-  //     status: "Success",
-  //     data: existingUser
-  //   });
-  // },
 
   createOrder: async (req, res) => {
     const userId = req.user.userId;
-    const { itemName, itemPrice, itemQuantity, total, categories } = req.body;
+    const { categories,date,timeSlot,  pickUpAddress, deliveryAddress } = req.body;
 
     const User = await userModel.findById(userId);
     if (!User) {
@@ -342,14 +309,11 @@ module.exports = {
     const newOrder = new orderModel({
       userId,
       categories: categories,
-      items: [
-        {
-          itemName: itemName,
-          itemPrice: itemPrice,
-          itemQuantity: itemQuantity,
-          total: total,
-        },
-      ],
+      date:date,
+      timeSlot:timeSlot,
+      pickUpAddress:pickUpAddress,
+      deliveryAddress:deliveryAddress,
+  
     });
     await newOrder.save();
 
@@ -359,6 +323,47 @@ module.exports = {
       status:"success",
       message: "Order created successfully", order: newOrder });
   },
+  
+  getOrderDetails:async(req,res)=>{
+    const userId=req.user.userId
+    const order=await orderModel.findOne({userId})
+    .sort({createdAt: -1 })
+    .limit(-1);
+
+    if (!order){
+      return res.status(400).json({
+        message:"No order found ",
+        status:"failure",
+        error:"true"
+
+      })
+    }
+    
+    return res.status(200).json({
+      message:"Oder data fetched success fully",
+      data:order,
+      status:"succes",
+      error:"false"
+    })
+    
+
+  },
+  getAllOrderDetails:async(req,res)=>{
+    const orders=await  orderModel.find()
+    if(!orders){
+      return res.status(400).json({
+        message:"No orders found",
+        status:"failure",
+        error:"true"
+      })
+    }
+    return res.status(200).json({
+      message:"Fetched all orders ",
+      data:orders,
+      error:"false",
+      status:"success"
+    })
+  }
   
 
 
