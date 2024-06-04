@@ -20,8 +20,9 @@ router
 .put("/updateAddress/address/:id",tokenVerifyUser,tryCatch(userController.editAddressOfUser))
 .get("/getUser",tokenVerifyUser,tryCatch(adminController.getAllUsers))
 .post("/createOrder",tokenVerifyUser,tryCatch(user.createOrder))
-.get("/getOrderDetails",tokenVerifyUser,tryCatch(user.getOrderDetails))
+.get("/getParticularOrderDetails/:id",tokenVerifyUser,tryCatch(user.getParticularOrderDetails))
 .get('/getAllOrders',tokenVerifyUser,tryCatch(user.getAllOrderDetails))
-
+.delete('/cancelOrder/:id',tokenVerifyUser,tryCatch(user.deleteOrder))
+.post('/postReview',tokenVerifyUser,tryCatch(user.addReviewOfUser))
 module.exports=router
 

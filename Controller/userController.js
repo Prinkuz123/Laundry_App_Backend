@@ -6,6 +6,7 @@ const orderModel = require("../Model/orderSchema");
 const jwt = require("jsonwebtoken");
 // const { sendEmail } = require("../utils/nodeMailer");
 const { sendOtpAndSave } = require("../utils/sendOtp");
+const reviewModel=require('../Model/reviewSchema')
 
 module.exports = {
   userRegistration: async (req, res) => {
@@ -324,12 +325,12 @@ module.exports = {
       message: "Order created successfully", order: newOrder });
   },
   
-  getOrderDetails:async(req,res)=>{
-    const userId=req.user.userId
-    const order=await orderModel.findOne({userId})
-    .sort({createdAt: -1 })
-    .limit(-1);
-
+  getParticularOrderDetails:async(req,res)=>{
+    const orderId=req.params.id
+    console.log("orderId",orderId);
+    const order=await orderModel.findById(orderId)
+    console.log("order",order);
+ 
     if (!order){
       return res.status(400).json({
         message:"No order found ",
@@ -363,7 +364,51 @@ module.exports = {
       error:"false",
       status:"success"
     })
+  },
+  deleteOrder:async(req,res)=>{
+    const orderId=req.params.id
+    const order=await orderModel.findByIdAndDelete(orderId)
+    if(order){
+      return res.status(200).json({
+        message:"Order cancelled",
+        status:"success",
+        error:"false"
+      })
+    }
+    return res.status(400).json({
+      message:"internal error",
+      status:"failure",
+      error:"true"
+    })
+
+  },
+  addReviewOfUser:async(req,res)=>{
+    const userId=req.user.userId
+    const {comment,rating}=req.body
+    const User=await userModel.findById(userId)
+    if(!User){
+      return res.status(400).json({
+        message:"No user found",
+        status:"Failure"
+      })
+    }
+    const newReview= new reviewModel({
+      userId,
+      rating,
+      comment
+    }) 
+    await newReview.save()
+    res.json({
+      message:"review posted",
+      status:"success",
+      error:"false",
+      data:userId
+    })
+  },
+  getReviewOfUser:async(req,res)=>{
+    
   }
+
   
 
 
