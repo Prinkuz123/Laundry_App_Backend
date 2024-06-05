@@ -384,8 +384,19 @@ module.exports = {
   },
   addReviewOfUser:async(req,res)=>{
     const userId=req.user.userId
+    // console.log(userId);
+    const orderId=req.params.orderId
+    // console.log(orderId);
     const {comment,rating}=req.body
+// console.log(comment,rating);
+if (!orderId || !userId) {
+  return res.status(400).json({
+    message: "orderId and userId are required",
+    status: "Failure"
+  });
+}
     const User=await userModel.findById(userId)
+    console.log("User",User);
     if(!User){
       return res.status(400).json({
         message:"No user found",
@@ -394,6 +405,7 @@ module.exports = {
     }
     const newReview= new reviewModel({
       userId,
+      orderId,
       rating,
       comment
     }) 
@@ -402,12 +414,39 @@ module.exports = {
       message:"review posted",
       status:"success",
       error:"false",
-      data:userId
+      data:newReview
     })
   },
-  getReviewOfUser:async(req,res)=>{
+  getReviewOfParticularOrder:async(req,res)=>{
+    const orderId=req.params.orderId
+    console.log(orderId);
+    const userId=req.user.userId
+    console.log(userId);
+    if (!orderId) {
+      return res.status(400).json({
+        message: "orderId is required",
+        status: "Failure",
+        error: true,
+      });
+    }
+    const review= await reviewModel.findOne({orderId})
+    console.log(review);
+    if(!review){
+     return res.status(400).json({
+        message:"No review found for this order",
+        status:"Failure",
+        error:true
+      })
+    }
+    return res.status(200).json({
+      message:"fetched review successfully",
+      status:"success",
+      error:false,
+      data:review
+    })
     
-  }
+  },
+ 
 
   
 

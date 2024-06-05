@@ -23,6 +23,7 @@ router
 .get("/getParticularOrderDetails/:id",tokenVerifyUser,tryCatch(user.getParticularOrderDetails))
 .get('/getAllOrders',tokenVerifyUser,tryCatch(user.getAllOrderDetails))
 .delete('/cancelOrder/:id',tokenVerifyUser,tryCatch(user.deleteOrder))
-.post('/postReview',tokenVerifyUser,tryCatch(user.addReviewOfUser))
+.post('/postReview/:orderId',tokenVerifyUser,tryCatch(user.addReviewOfUser))
+.get('/review/:orderId',tokenVerifyUser,tryCatch(user.getReviewOfParticularOrder))
 module.exports=router
 
