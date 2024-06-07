@@ -15,6 +15,9 @@ router
 .post("/admin/items/upload",upload.single("file"),tryCatch(adminController.addItems))
 .get("/admin/getItems",tryCatch(adminController.getAllItems))
 .post("/admin/addInstructions",tryCatch(adminController.addInstructions))
-.get("/admin/getUser",tokenVerifyUser,tryCatch(adminController.getUser))
-
+.get("/admin/getUser/:id",tryCatch(adminController.getUser))
+.post("/admin/postTracking",tryCatch(adminController.postTrackingStatus))
+.get("/admin/getTrackingStatus/:orderId",tryCatch(adminController.getTrackigStatus))
+.put("/admin/updateTrackingStatus/:trackingId",tryCatch(adminController.updateTrackingStatus))
+.get("/admin/getAllReviews",tryCatch(adminController.getAllReviews)) 
 module.exports=router

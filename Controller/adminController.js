@@ -3,6 +3,8 @@ const categorySchema = require("../Model/categoriesSchema");
 const itemSchema = require("../Model/itemSchema");
 const instructionSchema = require("../Model/instructionSchema");
 const userSchema = require("../Model/userSchema");
+const trackingModel=require('../Model/trackingSchema')
+const reviewModel=require('../Model/reviewSchema')
 
 module.exports = {
   //-------admin login-----
@@ -40,17 +42,17 @@ module.exports = {
     });
   },
   getUser: async (req, res) => {
-    const id = req.user.userId;
+    const id = req.params.id;
     console.log(id);
     const findUser = await userSchema.findById(id);
     console.log("finduser:", findUser);
     if (!findUser) {
-      res.status(400).json({
+      return res.status(400).json({
         message: "User not found ",
         status: "failure",
       });
     }
-    res.status(200).json({
+   return  res.status(200).json({
       message: "User details retrieved successfully",
       status: "success",
       user: findUser,
@@ -149,4 +151,96 @@ module.exports = {
       data: newInstruction,
     });
   },
+
+
+//---get all reviews-----
+getAllReviews:async(req,res)=>{
+const reviews=await reviewModel.find()
+if(!reviews){
+  return res.status(400).json({
+    message:"No review found",
+    status:"failure",
+    error:true
+  })
+}
+return res.status(200).json({
+  message:"Fetched all reviews",
+  data:reviews,
+  error:false,
+  status:"success"
+
+})
+},
+
+
+
+//------Post tracking------
+postTrackingStatus:async(req,res)=>{
+  const{currentStatus,orderId}=req.body
+
+    // Automatically set the estimated delivery time to 5 days from now at 15:00:00 (3 PM)
+    const estimatedDeliveryTime = new Date();
+    estimatedDeliveryTime.setDate(estimatedDeliveryTime.getDate() + 5);
+    estimatedDeliveryTime.setUTCHours(15, 0, 0, 0); // Set time to 15:00:00 UTC
+  const newTracking= new trackingModel({
+    orderId,
+    currentStatus,
+    estimatedDeliveryTime
+  })
+  await newTracking.save()
+  return res.status(200).json({
+    message:"Tracking posted",
+    status:"succees",
+    error:false,
+    data:newTracking
+    
+  })
+  
+    },
+
+//---------------updating tracking status---------
+updateTrackingStatus:async(req,res)=>{
+const trackingId=req.params.trackingId
+const{currentStatus}=req.body 
+const findtrackingStatus=await trackingModel.findById(trackingId)
+if(!findtrackingStatus){
+  return res.status(400).json({
+    message:"No tracking status found ",
+    status:"failure",
+    error:true
+  })
+}
+findtrackingStatus.currentStatus=currentStatus
+await findtrackingStatus.save()
+return res.status(200).json({
+  message:"Tracking updated",
+  data:findtrackingStatus,
+  error:false,
+  status:"success"
+})
+},
+
+
+//----gettracking status-------
+
+getTrackigStatus:async(req,res)=>{
+  const orderId=req.params.orderId
+  const findTrackingStatus= await trackingModel.findOne({orderId})
+  if(!findTrackingStatus){
+    return res.status(400).json({
+      message:"Not found any orders",
+      data:findTrackingStatus,
+      error:false
+    })
+  }
+  return res.status(200).json({
+    message:"fetched tracking status",
+    data:findTrackingStatus,
+    error:false,
+    status:"success",
+  })
+}
+   
+
+
 };

@@ -25,5 +25,6 @@ router
 .delete('/cancelOrder/:id',tokenVerifyUser,tryCatch(user.deleteOrder))
 .post('/postReview/:orderId',tokenVerifyUser,tryCatch(user.addReviewOfUser))
 .get('/review/:orderId',tokenVerifyUser,tryCatch(user.getReviewOfParticularOrder))
+.get('/trackingStatus/:orderId',tryCatch(adminController.getTrackigStatus))
 module.exports=router
 

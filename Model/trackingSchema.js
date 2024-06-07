@@ -6,10 +6,10 @@ const trackingSchema = new mongoose.Schema({
         ref: "Order",
         required: true
     },
-    status: {
+    currentStatus: {
         type: String,
-        enum: ['pending', 'shipped', 'delivered'],
-        default: 'pending'
+        enum: ['Scheduled', 'Pickup', 'Washing','Ironing','Dryclean','Wash and Iron','Out for delivery'],
+        default: 'Scheduled'
     },
     estimatedDeliveryTime: {
         type: Date,
