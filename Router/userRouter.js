@@ -21,10 +21,12 @@ router
 .get("/getUser",tokenVerifyUser,tryCatch(adminController.getAllUsers))
 .post("/createOrder",tokenVerifyUser,tryCatch(user.createOrder))
 .get("/getParticularOrderDetails/:id",tokenVerifyUser,tryCatch(user.getParticularOrderDetails))
-.get('/getAllOrders',tokenVerifyUser,tryCatch(user.getAllOrderDetails))
+.get("/getAllOrdersOfASingleUser",tokenVerifyUser,tryCatch(userController.getAllOrderDetailsOfASingleUser))
 .delete('/cancelOrder/:id',tokenVerifyUser,tryCatch(user.deleteOrder))
 .post('/postReview/:orderId',tokenVerifyUser,tryCatch(user.addReviewOfUser))
+.put("/editReview/:id",tokenVerifyUser,tryCatch(user.editReviewOfParticularUser))
 .get('/review/:orderId',tokenVerifyUser,tryCatch(user.getReviewOfParticularOrder))
 .get('/trackingStatus/:orderId',tryCatch(adminController.getTrackigStatus))
+.get('/getAddressesOfASingleUser',tokenVerifyUser,tryCatch(adminController.getAddressesOfASingleUser))
 module.exports=router
 

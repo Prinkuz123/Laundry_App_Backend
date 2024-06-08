@@ -20,4 +20,5 @@ router
 .get("/admin/getTrackingStatus/:orderId",tryCatch(adminController.getTrackigStatus))
 .put("/admin/updateTrackingStatus/:trackingId",tryCatch(adminController.updateTrackingStatus))
 .get("/admin/getAllReviews",tryCatch(adminController.getAllReviews)) 
+.get('/admin/getAllOrders',tryCatch(adminController.getAllOrderDetails))
 module.exports=router

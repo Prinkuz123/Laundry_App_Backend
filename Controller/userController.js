@@ -6,7 +6,8 @@ const orderModel = require("../Model/orderSchema");
 const jwt = require("jsonwebtoken");
 // const { sendEmail } = require("../utils/nodeMailer");
 const { sendOtpAndSave } = require("../utils/sendOtp");
-const reviewModel=require('../Model/reviewSchema')
+const reviewModel=require('../Model/reviewSchema');
+const { getAllOrderDetails } = require("./adminController");
 
 
 module.exports = {
@@ -261,12 +262,12 @@ module.exports = {
   editAddressOfUser: async (req, res) => {
     // const id=req.params.id
     const userId = req.user?.userId;
-    console.log("userid", userId);
+    // console.log("userid", userId);
     const address_id = req.params.id;
-    console.log("addressid", address_id);
+    // console.log("addressid", address_id);
     const { street, city, state, postalCode } = req.body;
     const existingUser = await userModel.findById(userId);
-    console.log("existingUser", existingUser);
+    // console.log("existingUser", existingUser);
     if (!existingUser) {
       res.status(400).json({
         message: "No user found",
@@ -350,22 +351,7 @@ module.exports = {
     
 
   },
-  getAllOrderDetails:async(req,res)=>{
-    const orders=await  orderModel.find()
-    if(!orders){
-      return res.status(400).json({
-        message:"No orders found",
-        status:"failure",
-        error:"true"
-      })
-    }
-    return res.status(200).json({
-      message:"Fetched all orders ",
-      data:orders,
-      error:"false",
-      status:"success"
-    })
-  },
+
   deleteOrder:async(req,res)=>{
     const orderId=req.params.id
     const order=await orderModel.findByIdAndDelete(orderId)
@@ -418,6 +404,38 @@ if (!orderId || !userId) {
       data:newReview
     })
   },
+  editReviewOfParticularUser:async(req,res)=>{
+const userId=req.user.userId
+const review_Id=req.params.id
+const{comment,rating}=req.body
+const user=await userModel.findById(userId)
+if(!user ){
+  return res.status(400).json({
+    message:"No user found ",
+    status:"success",
+    error:true
+  })
+}
+const review=await reviewModel.findOne({_id:review_Id,userId})
+if(!review ){
+  return res.status(400).json({
+    message:"No review found for this user",
+    status:"failure",
+    error:true
+  })
+}
+    // Update the review with the new comment and rating
+review.comment = comment || review.comment;
+review.rating = rating || review.rating;
+
+await review.save();
+return res.status(200).json({
+  message: "Review updated successfully",
+  status: "success",
+  error: false,
+  data: review
+});
+  },
   getReviewOfParticularOrder:async(req,res)=>{
     const orderId=req.params.orderId
     console.log(orderId);
@@ -447,6 +465,24 @@ if (!orderId || !userId) {
     })
     
   },
+  getAllOrderDetailsOfASingleUser:async(req,res)=>{
+    const userId=req.user.userId
+    const order=await orderModel.find({userId})
+    if(!order){
+      return res.status(400).json({
+        message:"No order found",
+        status:"success",
+        error:true
+      })
+    }
+    return res.status(200).json({
+      message:"Fetched all order details of a single user ",
+statuss:"failure",
+error:false,
+data:order
+    })
+  }
+  
 
  
 

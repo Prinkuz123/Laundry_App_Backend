@@ -5,6 +5,7 @@ const instructionSchema = require("../Model/instructionSchema");
 const userSchema = require("../Model/userSchema");
 const trackingModel=require('../Model/trackingSchema')
 const reviewModel=require('../Model/reviewSchema')
+const orderModel=require('../Model/orderSchema')
 
 module.exports = {
   //-------admin login-----
@@ -57,6 +58,24 @@ module.exports = {
       status: "success",
       user: findUser,
     });
+  },
+  getAddressesOfASingleUser:async(req,res)=>{
+    const userId=req.user.userId
+    const user=await userSchema.findById(userId).select('address')
+    if(!user){
+      return res.status(400).json({
+        message:"No user found",
+        status:"failure",
+        error:true,
+      })
+    }
+    return res.status(200).json({
+      message:"Retrieved addresses successfully",
+      status:"success",
+      error:false,
+      data:user
+    })
+
   },
 
   uploadCategoryAndImage: async (req, res) => {
@@ -124,7 +143,7 @@ module.exports = {
   getAllItems: async (req, res) => {
     const findItems = await itemSchema.find();
     if (findItems.length === 0) {
-      res.status(400).json({
+      return res.status(400).json({
         message: "No items found",
         status: "failure",
       });
@@ -239,7 +258,23 @@ getTrackigStatus:async(req,res)=>{
     error:false,
     status:"success",
   })
-}
+},
+getAllOrderDetails:async(req,res)=>{
+  const orders=await  orderModel.find()
+  if(!orders){
+    return res.status(400).json({
+      message:"No orders found",
+      status:"failure",
+      error:"true"
+    })
+  }
+  return res.status(200).json({
+    message:"Fetched all orders ",
+    data:orders,
+    error:"false",
+    status:"success"
+  })
+},
    
 
 
